@@ -1,0 +1,29 @@
+# --- Project-specific exclusions (requested) ---
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+others/
+report/
+results/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# --- Jupyter ---
+*.ipynb_checkpoints
+
+# --- OS / editor clutter ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Large model / data artifacts (in case they land outside others/) ---
+*.bin
+*.safetensors
+*.pt
+*.pth
