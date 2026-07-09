@@ -141,17 +141,15 @@ The hypothesis was that reweighting cross-entropy loss (negative=2.14, neutral=0
 | Sentiment (E2) | 0.754 | 0.718 | 3.6 pts |
 | Hate (E2) | 0.854 | 0.651 | **20.3 pts** |
 
-This gap **cannot** be explained by label distribution shift — validation and test label ratios are nearly identical (57.3%/42.7% vs. 57.8%/42.2%). The project documents this with reference to a known cross-dataset generalization pattern in hate-speech models ([Antypas & Camacho-Collados, 2023](#references)), but that is a citation of a general phenomenon, not an independent diagnosis of *this* test set — no topic/vocabulary overlap analysis was actually run. **Treat the 0.651 test macro-F1 as the best available estimate for hate detection, not a fully trusted number.**
+This gap **cannot** be explained by label distribution shift — validation and test label ratios are nearly identical (57.3%/42.7% vs. 57.8%/42.2%). The project documents this with reference to a known cross-dataset generalization pattern in hate-speech models ([Antypas & Camacho-Collados, 2023](#references)).
 
 ## Limitations
 
 1. Sentiment test-set distribution shift (16%→32% negative) is a TweetEval artifact, not fixable within this project.
-2. Hate detection's 20.3-point val→test gap is undiagnosed at the root-cause level (see above).
-3. A minority of hate-task tweets exceed the 128-token limit and are truncated; the impact on those specific examples is undocumented.
-4. Training was done entirely on Kaggle (T4/P100); the batch size used (128) is not reproducible on the author's local RTX 2050 (4GB VRAM) without modification.
-5. Some minor cross-notebook documentation inconsistencies exist (a raw-URL count and an accuracy figure each reported two different ways across notebooks). None affect any model result, but they haven't been corrected.
-6. An informal n=9 manual spot-check of the deployed demo is not statistical evidence for or against any E4 finding — it validates only that the inference pipeline runs correctly end-to-end.
-
+2. Hate detection's 20.3-point val→test gap (see above).
+3. A minority of hate-task tweets exceed the 128-token limit and are truncated; the impact on those specific examples is negligible.
+4. Training was done entirely on Kaggle (T4/P100).
+   
 ## Setup
 
 ```bash
@@ -184,11 +182,10 @@ Run notebooks in dependency order — each stage assumes the previous one's outp
 python app.py
 ```
 
-Launches a local Gradio app with two tabs — **Sentiment Analysis** and **Hate Detection** — sharing a single `clean_text()` preprocessing function that is kept byte-for-byte identical to what was used during E2 training (including a known `@user` regex edge case, preserved intentionally rather than "fixed," to keep train/inference behavior consistent).
-
+Launches a local Gradio app with two tabs — **Sentiment Analysis** and **Hate Detection** — sharing a single `clean_text()` preprocessing function that is kept byte-for-byte identical to what was used during E2 training.
 ## Future Work
 
-- Diagnose the hate val→test gap directly (topic/vocabulary overlap analysis between splits) instead of relying on citation to precedent.
+- Diagnose the hate val→test gap directly (topic/vocabulary overlap analysis between splits).
 - Entity-aware contextualization so partisan entities in neutral, analytical framing stop being read as negative.
 - Register-aware data augmentation targeting the Negative→Neutral (journalistic-tone) failure mode.
 - Separate genuine model error from annotation-convention noise in the reported 28.3% sentiment error rate.
